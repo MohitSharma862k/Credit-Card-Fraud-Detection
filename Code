@@ -1,0 +1,24 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.compose import ColumnTransformer
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import OneHotEncoder, normalize, StandardScaler
+from sklearn.linear_model import LogisticRegression
+
+df = pd.read_csv('/kaggle/input/logistic-regression/Social_Network_Ads.csv')
+
+X = df.drop(["User ID", "Purchased"], axis=1)
+y = df[["Purchased"]]
+
+features_num = ["Age", "EstimatedSalary"]
+features_cat = ["Gender"]
+preprocessor = ColumnTransformer([("OneHotEncoder", OneHotEncoder(), features_cat), ("Normalization", StandardScaler(), features_num)], remainder="passthrough")
+X = preprocessor.fit_transform(X)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+model = LogisticRegression()
+model.fit(X_train, y_train)\
+
+model.score(X_test, y_test)
